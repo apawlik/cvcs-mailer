@@ -51,7 +51,7 @@ write_lines("----------",path = paste("kitchen_report_", date_str, ".txt", sep="
 
 current_guests <- bookings %>%
   mutate(Guest = paste(First.Name, Last.Name)) %>%
-  filter(as.Date(Check.In.Date, "%d-%m-%Y") < as.Date(current_date, "%d-%m-%Y") & as.Date(current_date, "%d-%m-%Y") <= as.Date(Check.Out.Date, "%d-%m-%Y") ) %>%
+  filter(as.Date(Check.In.Date, "%d-%m-%Y") < as.Date(current_date, "%d-%m-%Y") & as.Date(current_date, "%d-%m-%Y") < as.Date(Check.Out.Date, "%d-%m-%Y") ) %>%
   select(Guest)
 
 write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
