@@ -5,6 +5,7 @@
 
 
 library(tidyverse)
+library(ggplot2)
 
 
 current_date <- as.Date(Sys.Date())
@@ -14,13 +15,58 @@ bookings <- read.csv(filename)
 
 date2 <- format(current_date+2, "%d-%m-%Y")
 
-
-
 b1 <- bookings %>% 
       select(Email, Check.In.Date, ) %>% 
       filter(as.character(Check.In.Date) == as.character(date2))
 
-write_lines(b1$Email, path = "email_them.txt",sep=",")
+write_lines(b1$Email, path = paste("email_guests_on", date_str, ".csv", sep=""),sep=",")
+
+
+## Linen report
+
+linen <- bookings %>% 
+         filter( Linen.Required == "Yes" | Last.Name =="Haka Tours")  %>%
+        mutate(Guest = paste(First.Name, Last.Name)) %>%
+        mutate(Staying.Days = (as.Date(Check.Out.Date, "%d-%m-%Y") - as.Date(Check.In.Date, "%d-%m-%Y") )) %>%
+        select(Check.In.Date, Check.Out.Date, Staying.Days, Guest,  Room.Type) %>%
+        arrange(date = as.Date(Check.In.Date, "%d-%m-%Y")) 
+
+write_lines(paste("Linen requirements as of ", date_str),path = paste("linen_report_", date_str, ".csv", sep=""))
+
+write.table(linen, file = paste("linen_report_", date_str, ".csv", sep=""), sep=",", row.names = F, append=TRUE)
+
+
+
+# Kitchen report
+new_guests <- bookings %>%
+               filter(as.character(Check.In.Date) == as.character(format(current_date, "%d-%m-%Y")) ) %>%
+               mutate(Guest = paste(First.Name, Last.Name)) %>%
+               mutate(Staying.Days = (as.Date(Check.Out.Date, "%d-%m-%Y") - as.Date(Check.In.Date, "%d-%m-%Y") )) %>%
+               select(Guest, Staying.Days)
+
+write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".txt", sep=""))
+write.table(new_guests, ol.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+
+write_lines("----------",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+
+current_guests <- bookings %>%
+  mutate(Guest = paste(First.Name, Last.Name)) %>%
+  filter(as.Date(Check.In.Date, "%d-%m-%Y") < as.Date(current_date, "%d-%m-%Y") & as.Date(current_date, "%d-%m-%Y") <= as.Date(Check.Out.Date, "%d-%m-%Y") ) %>%
+  select(Guest)
+
+write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+
+# Cleanup
+# Move all files that are not with the current date at the end to the Archive
+ 
+
+
+linen_counts <- bookings %>% count(Check.In.Date, Linen.Required=="Yes")
+#ggplot(data = linen_counts, mapping = aes(x = Check.In.Date, y = n)) +
+  geom_line()
+
+#family_rooms <- bookings %>%
 
 
 ## TO DO
