@@ -8,7 +8,8 @@ library(tidyverse)
 library(ggplot2)
 
 
-current_date <- as.Date(Sys.Date())
+
+current_date <- as.Date(Sys.Date(),  "%d-%m-%Y")
 date_str <- gsub("-", "_", as.character(current_date))
 filename <- paste("BookingRecords_", date_str, ".csv", sep="")
 bookings <- read.csv(filename)
@@ -45,7 +46,9 @@ new_guests <- bookings %>%
                select(Guest, Staying.Days)
 
 write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".txt", sep=""))
-write.table(new_guests, ol.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+write.table(new_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+
+write_lines("Total new ",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 
 write_lines("----------",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 
@@ -57,16 +60,13 @@ current_guests <- bookings %>%
 write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
 
+write_lines("Total current ",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+
 # Cleanup
 # Move all files that are not with the current date at the end to the Archive
  
 
 
-linen_counts <- bookings %>% count(Check.In.Date, Linen.Required=="Yes")
-#ggplot(data = linen_counts, mapping = aes(x = Check.In.Date, y = n)) +
-  geom_line()
-
-#family_rooms <- bookings %>%
 
 
 ## TO DO
