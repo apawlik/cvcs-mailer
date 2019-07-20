@@ -48,7 +48,7 @@ new_guests <- bookings %>%
 write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".txt", sep=""))
 write.table(new_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
 
-write_lines("Total new ",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write_lines(paste("New guests total ",nrow(new_guests)),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 
 write_lines("----------",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 
@@ -60,7 +60,7 @@ current_guests <- bookings %>%
 write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
 
-write_lines("Total current ",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write_lines(paste("Current guests total", nrow(current_guests)),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
 
 # Cleanup
 # Move all files that are not with the current date at the end to the Archive
