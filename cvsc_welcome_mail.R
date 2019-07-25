@@ -47,21 +47,21 @@ new_guests <- bookings %>%
                select(Guest, Staying.Days)
 
 write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".txt", sep=""))
-write.table(new_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+write.table(new_guests, col.names = F, file = paste("kitchen_report_", date_str, ".csv", sep=""), row.names=F,  sep=",", append=TRUE)
 
-write_lines(paste("New guests total ",nrow(new_guests)),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write_lines(paste("New guests total ",nrow(new_guests)),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 
-write_lines("----------",path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write_lines("----------",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 
 current_guests <- bookings %>%
   mutate(Guest = paste(First.Name, Last.Name)) %>%
   filter(as.Date(Check.In.Date, "%d-%m-%Y") < as.Date(current_date, "%d-%m-%Y") & as.Date(current_date, "%d-%m-%Y") < as.Date(Check.Out.Date, "%d-%m-%Y") ) %>%
   select(Guest)
 
-write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
-write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".txt", sep=""), row.names=F,  sep=",", append=TRUE)
+write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
+write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".csv", sep=""), row.names=F,  sep=",", append=TRUE)
 
-write_lines(paste("Current guests total", nrow(current_guests)),path = paste("kitchen_report_", date_str, ".txt", sep=""), append=TRUE)
+write_lines(paste("Current guests total", nrow(current_guests)),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 
 # Cleanup
 # Move all files that are not with the current date at the end to the Archive
@@ -70,7 +70,7 @@ write_lines(paste("Current guests total", nrow(current_guests)),path = paste("ki
 report_files= list.files(pattern = ".csv")
 lapply(report_files, function(x){
     if (x != paste("linen_report_", date_str, ".csv", sep="")
-        && x != paste("kitchen_report_", date_str, ".txt", sep="") 
+        && x != paste("kitchen_report_", date_str, ".csv", sep="") 
         && x != paste("BookingRecords_", date_str, ".csv", sep="") 
         && x != paste("email_guests_on", date_str, ".csv", sep="") ){
       file.rename(from=x, to=paste("Archive/",x) )
