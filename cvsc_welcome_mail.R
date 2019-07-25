@@ -44,21 +44,26 @@ new_guests <- bookings %>%
                filter(as.character(Check.In.Date) == as.character(format(current_date, "%d-%m-%Y")) ) %>%
                mutate(Guest = paste(First.Name, Last.Name)) %>%
                mutate(Staying.Days = (as.Date(Check.Out.Date, "%d-%m-%Y") - as.Date(Check.In.Date, "%d-%m-%Y") )) %>%
-               select(Guest, Staying.Days)
+               select(Guest, Staying.Days, Vegetarian)
 
-write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".txt", sep=""))
+write_lines(paste("Guests arriving today - ", date_str),path = paste("kitchen_report_", date_str, ".csv", sep=""))
+write_lines("Guest name  , Staying days  , vegetarian  ",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
+write_lines("- - - - - - - - - -",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 write.table(new_guests, col.names = F, file = paste("kitchen_report_", date_str, ".csv", sep=""), row.names=F,  sep=",", append=TRUE)
 
 write_lines(paste("New guests total ",nrow(new_guests)),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 
 write_lines("----------",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
+write_lines("----------",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 
 current_guests <- bookings %>%
   mutate(Guest = paste(First.Name, Last.Name)) %>%
   filter(as.Date(Check.In.Date, "%d-%m-%Y") < as.Date(current_date, "%d-%m-%Y") & as.Date(current_date, "%d-%m-%Y") < as.Date(Check.Out.Date, "%d-%m-%Y") ) %>%
-  select(Guest)
+  select(Guest, Vegetarian)
 
 write_lines(paste("Current guests "),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
+write_lines("Guest name  , vegetarian  ",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
+write_lines("- - - - - - - - - -",path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
 write.table(current_guests, col.names = F, file = paste("kitchen_report_", date_str, ".csv", sep=""), row.names=F,  sep=",", append=TRUE)
 
 write_lines(paste("Current guests total", nrow(current_guests)),path = paste("kitchen_report_", date_str, ".csv", sep=""), append=TRUE)
