@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(ggplot2)
+library(filesstrings)
 
 
 
@@ -65,6 +66,20 @@ write_lines(paste("Current guests total", nrow(current_guests)),path = paste("ki
 # Cleanup
 # Move all files that are not with the current date at the end to the Archive
  
+
+report_files= list.files(pattern = ".csv")
+lapply(report_files, function(x){
+    if (x != paste("linen_report_", date_str, ".csv", sep="")
+        && x != paste("kitchen_report_", date_str, ".txt", sep="") 
+        && x != paste("BookingRecords_", date_str, ".csv", sep="") 
+        && x != paste("email_guests_on", date_str, ".csv", sep="") ){
+      file.rename(from=x, to=paste("Archive/",x) )
+    } 
+
+  })
+
+
+#file.move("Archive")
 
 
 
