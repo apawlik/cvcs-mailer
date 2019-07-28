@@ -15,7 +15,7 @@ date_str <- gsub("-", "_", as.character(current_date))
 filename <- paste("BookingRecords_", date_str, ".csv", sep="")
 bookings <- read.csv(filename)
 
-date2 <- format(current_date+2, "%d-%m-%Y")
+date2 <- format(current_date+1, "%d-%m-%Y")
 
 b1 <- bookings %>% 
       select(Email, Check.In.Date, ) %>% 
@@ -84,9 +84,21 @@ lapply(report_files, function(x){
   })
 
 
-#file.move("Archive")
+
+## Special requests
+
+special_requests <- bookings %>%
+  filter(Other.Information != "" ) %>%
+  filter(Other.Information != "Linen required") %>%
+  filter( !grepl("work party vouchers", Other.Information) ) %>%
+  filter(as.Date(Check.In.Date, "%d-%m-%Y") > as.Date(current_date, "%d-%m-%Y")) %>%
+  select(Booking.No., First.Name, Email, Check.In.Date, Other.Information)  %>%
+  arrange(date = as.Date(Check.In.Date, "%d-%m-%Y")) 
 
 
+
+
+write.table(special_requests, col.names = F, file = paste("special_requests", date_str, ".csv", sep=""), row.names=F,  sep=",")
 
 
 ## TO DO
